@@ -1,23 +1,25 @@
 #! /usr/local/bin/python3
-
 import argparse
 from pedalboard import Pedalboard, Chorus
 import os
 import soundfile as sf
 
-# Instantiate the Chorus object early so we can read its defaults for the argparser --help:
 chorus = Chorus()
+options = [
+  { 'name': "rate_hz", 'type': float, 'default': chorus.rate_hz, },
+  { 'name': "depth", 'type': float, 'default': chorus.depth, },
+  { 'name': "centre_delay_ms", 'type': float, 'default': chorus.centre_delay_ms, },
+  { 'name': "feedback", 'type': float, 'default': chorus.feedback, },
+  { 'name': "mix", 'type': float, 'default': chorus.mix, 'help': "value must be between 0.0 and 1.0" }
+  ]
 
-options = ["rate_hz", "depth", "centre_delay_ms", "feedback"]
 parser = argparse.ArgumentParser()
-parser.add_argument(
-    "--mix", help="value must be between 0.0 and 1.0", type=float, default=chorus.mix
-)
-
 parser.add_argument("--input_file", help="The input file to add chorus to.")
 parser.add_argument("--output_file", help="Path for the output file")
+
 for option in options:
-    parser.add_argument("--" + option, type=float, default=getattr(chorus, option))
+    help = option['help'] if 'help' in option.keys() else None
+    parser.add_argument("--" + option['name'], type=option['type'], default=option['default'], help=help, metavar='')
 
 args = parser.parse_args()
 input_filepath = getattr(args, "input_file")
@@ -29,7 +31,7 @@ if not output_filepath:
     raise Exception("output_file is required")
 
 for option in options:
-    setattr(chorus, option, getattr(args, option))
+    setattr(chorus, option['name'], getattr(args, option['name']))
 
 audio, sample_rate = sf.read(input_filepath)
 pedalboard = Pedalboard(
