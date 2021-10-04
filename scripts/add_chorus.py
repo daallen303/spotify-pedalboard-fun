@@ -11,7 +11,7 @@ options = [
   { 'name': "centre_delay_ms", 'type': float, 'default': chorus.centre_delay_ms, },
   { 'name': "feedback", 'type': float, 'default': chorus.feedback, },
   { 'name': "mix", 'type': float, 'default': chorus.mix, 'help': "value must be between 0.0 and 1.0" }
-  ]
+  ] 
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--input_file", help="The input file to add chorus to.")
